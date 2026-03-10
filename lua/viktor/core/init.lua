@@ -1,3 +1,2 @@
-require("viktor.core.remap")
+require("viktor.core.keymap")
 require("viktor.core.options")
-require("viktor.core.lsp")
