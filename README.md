@@ -39,6 +39,7 @@ Personal Neovim configuration built on **Lazy.nvim** plugin manager with the **T
 | **LuaSnip** + **friendly-snippets** | Snippet engine with a large VSCode-style snippet library |
 | **lspkind.nvim** | VSCode-like icons in the completion menu |
 | **conform.nvim** | Code formatter (prettier, stylua, black, isort) |
+| **nvim-surround** | Add, delete, and change surrounding pairs (brackets, quotes, tags) |
 
 ### LSP (Language Server Protocol)
 | Plugin | Purpose |
@@ -157,6 +158,61 @@ Personal Neovim configuration built on **Lazy.nvim** plugin manager with the **T
 |------|-------------|----------|----------|
 | `<leader>mp` | Format file or selection | **M**ake **P**retty | You pasted code from StackOverflow and the indentation is a mess |
 
+### Surround (nvim-surround)
+
+Three core operators: **y**ou **s**urround (add), **d**elete **s**urround (delete), **c**hange **s**urround (change).
+
+#### Adding Surroundings (`ys` — **Y**ou **S**urround)
+
+| Keys | Example Before | Example After | Mnemonic | Use Case |
+|------|---------------|---------------|----------|----------|
+| `ysiw)` | `hello` | `(hello)` | **Y**ou **S**urround **I**nner **W**ord with `)` | You're wrapping a variable in a function call like `print(hello)` |
+| `ysiw(` | `hello` | `( hello )` | Same but `)` = tight, `(` = spaced | You want padded parens for readability: `assert( value )` |
+| `ysiw]` | `hello` | `[hello]` | Closing bracket = no spaces | You're making an array index like `arr[index]` |
+| `ysiw[` | `hello` | `[ hello ]` | Opening bracket = with spaces | You want spaced brackets for a template expression |
+| `ysiw"` | `hello` | `"hello"` | Surround word with double quotes | You need to turn a bare word into a string: `"hello"` |
+| `ysiw'` | `hello` | `'hello'` | Surround word with single quotes | You're wrapping a key in single quotes for a dictionary |
+| `ysiw}` | `hello` | `{hello}` | Closing brace = tight | You're wrapping a variable in JSX: `{hello}` |
+| `ysiw{` | `hello` | `{ hello }` | Opening brace = spaced | You want spaced braces like in a JS object destructure |
+| `ys$"` | `make strings` | `"make strings"` | Surround from cursor to end of line | You want to quote everything from cursor to end of the line |
+| `ysiw<tag>` | `hello` | `<tag>hello</tag>` | Surround word with HTML tag | You're wrapping text in `<span>hello</span>` |
+| `yssb` or `yss)` | `hello world` | `(hello world)` | **S**urround whole **S**entence (line) with **b**rackets | You want to wrap an entire line in parentheses |
+
+> **Tip:** Closing bracket `)`/`]`/`}` = tight (no spaces). Opening bracket `(`/`[`/`{` = padded (with spaces).
+
+#### Deleting Surroundings (`ds` — **D**elete **S**urround)
+
+| Keys | Example Before | Example After | Mnemonic | Use Case |
+|------|---------------|---------------|----------|----------|
+| `ds"` | `"hello"` | `hello` | **D**elete **S**urround `"` | You want to remove quotes from a string you're inlining |
+| `ds'` | `'hello'` | `hello` | **D**elete **S**urround `'` | Removing quotes from a dictionary key |
+| `ds)` | `(hello)` | `hello` | **D**elete **S**urround `)` | You're unwrapping a value from a function call |
+| `ds]` | `[hello]` | `hello` | **D**elete **S**urround `]` | Removing brackets from an array index |
+| `ds}` | `{hello}` | `hello` | **D**elete **S**urround `}` | Removing braces from a JSX expression |
+| `dst` | `<b>hello</b>` | `hello` | **D**elete **S**urround **T**ag | You want to strip an HTML tag but keep the text content |
+| `dsf` | `print(hello)` | `hello` | **D**elete **S**urround **F**unction | You want to remove a function call but keep the argument |
+
+#### Changing Surroundings (`cs` — **C**hange **S**urround)
+
+| Keys | Example Before | Example After | Mnemonic | Use Case |
+|------|---------------|---------------|----------|----------|
+| `cs'"` | `'hello'` | `"hello"` | **C**hange **S**urround `'` to `"` | Switching from single to double quotes to match project style |
+| `cs"'` | `"hello"` | `'hello'` | **C**hange **S**urround `"` to `'` | Switching to single quotes for a JS string |
+| `cs)]` | `(hello)` | `[hello]` | **C**hange **S**urround `)` to `]` | Switching from function args to array brackets |
+| `cs)}` | `(hello)` | `{hello}` | **C**hange **S**urround `)` to `}` | Changing parens to braces for a JSX expression |
+| `cs)>` | `(hello)` | `<hello>` | **C**hange **S**urround `)` to `>` | Wrapping in angle brackets |
+| `csth1` | `<b>hello</b>` | `<h1>hello</h1>` | **C**hange **S**urround **T**ag to `h1` | Changing an HTML tag type (e.g., `<b>` to `<h1>`) |
+| `cs"f` | `"hello"` | `func("hello")` | **C**hange **S**urround `"` to **F**unction | Wrapping a quoted string in a function call |
+
+#### Visual Mode Surround (`S`)
+
+| Keys | Description | Use Case |
+|------|-------------|----------|
+| `v` + select + `S"` | Surround visual selection with `"` | You selected a multi-word expression and want to wrap it in quotes |
+| `v` + select + `S)` | Surround visual selection with `()` | You selected an expression and want to wrap it in parentheses |
+| `v` + select + `S<tag>` | Surround visual selection with HTML tag | You selected text and want to wrap it in `<div>...</div>` |
+| `V` + select + `S{` | Surround selected lines with `{ }` | You selected a block of code and want to wrap it in braces (e.g., adding an `if` body) |
+
 ### Git
 
 | Keys | Description | Mnemonic | Use Case |
@@ -214,6 +270,17 @@ The keybindings follow a consistent **`<leader>` + prefix + action** pattern. Me
 | `r` | **R**ename / **R**estart | "I want to **R**ename or **R**estart" |
 | `d` / `D` | **D**iagnostics | "Show me **D**iagnostics" |
 | `m` | **M**ake | "**M**ake it pretty (format)" |
+
+**Surround operators (no leader key):**
+
+| Operator | Meaning | Remember as... |
+|----------|---------|----------------|
+| `ys` | Add surround | "**Y**ou **S**urround" — you're adding something around text |
+| `ds` | Delete surround | "**D**elete **S**urround" — you're removing the wrapper |
+| `cs` | Change surround | "**C**hange **S**urround" — you're swapping one wrapper for another |
+| `S` (visual) | Surround selection | Capital **S** = **S**urround what I selected |
+
+> **Bracket rule:** Closing `)` `]` `}` = tight, opening `(` `[` `{` = with spaces. Think: "closing is closer (tight), opening makes room (spaced)."
 
 **Common second letters:**
 
@@ -294,7 +361,17 @@ The keybindings follow a consistent **`<leader>` + prefix + action** pattern. Me
 3. Press `Enter` on the desired state to restore it
 4. `<leader>u` - Close the undo tree when done
 
-### Workflow 8: "End of day wrap-up"
+### Workflow 8: "I need to refactor surroundings (quotes, brackets, tags)"
+
+1. `cs'"` - Change single quotes to double quotes across your code
+2. `dst` - Strip an unnecessary HTML wrapper tag but keep its content
+3. `ysiw)` - Wrap a variable name in parentheses to pass it as a function argument
+4. `dsf` - Remove a function wrapper like `String(value)` to just `value`
+5. Visually select a block with `V`, then `S{` to wrap it in braces for a new `if` block
+6. `csth1` - Change a `<div>` to an `<h1>` tag
+7. `ysiw"` - Wrap a bare word in quotes to turn it into a string literal
+
+### Workflow 9: "End of day wrap-up"
 
 1. `<leader>ft` - Review remaining TODOs
 2. `<leader>xw` - Check that no diagnostics are left unresolved
