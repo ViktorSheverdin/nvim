@@ -20,7 +20,7 @@ return {
 			"bash",
 			"lua",
 			"vim",
-			"dockerfil",
+			"dockerfile",
 			"gitignore",
 			"query",
 			"vimdoc",
