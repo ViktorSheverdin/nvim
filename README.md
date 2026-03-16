@@ -13,7 +13,7 @@ Personal Neovim configuration built on **Lazy.nvim** plugin manager with the **T
 | Plugin | Purpose |
 |--------|---------|
 | **tokyonight.nvim** | Tokyo Night color scheme (night variant) |
-| **alpha-nvim** | Startup dashboard with quick actions |
+| **snacks.nvim (dashboard)** | Startup dashboard with recent files, projects, and git status |
 | **lualine.nvim** | Custom status line with mode colors |
 | **bufferline.nvim** | Tab-like buffer bar at the top |
 | **which-key.nvim** | Keybinding help popup (shows after 500ms) |
