@@ -1,5 +1,8 @@
 local keymap = vim.keymap -- for conciseness
 
+-- clear search highlights on Esc
+keymap.set("n", "<Esc>", "<cmd>nohl<CR>", { desc = "Clear search highlights" })
+
 -- increment/decrement numbers
 keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
 keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
