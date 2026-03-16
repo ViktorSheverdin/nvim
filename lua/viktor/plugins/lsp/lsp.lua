@@ -3,7 +3,11 @@ return {
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     { "antosha417/nvim-lsp-file-operations", config = true },
-    { "folke/lazydev.nvim", opts = {} },
+    { "folke/lazydev.nvim", opts = {
+      library = {
+        { path = "snacks.nvim", words = { "Snacks" } },
+      },
+    } },
   },
   config = function()
     -- import cmp-nvim-lsp plugin

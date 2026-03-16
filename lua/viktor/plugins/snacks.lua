@@ -96,6 +96,7 @@ return {
 		{ "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete Buffer" },
 		{ "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File" },
 		{ "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },
+		{ "<leader>gbl", function() Snacks.git.blame_line() end, desc = "Git Blame Line" },
 		{ "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
 		{ "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
 		{ "<c-/>", function() Snacks.terminal() end, desc = "Toggle Terminal" },
@@ -131,15 +132,6 @@ return {
 				end
 				_G.bt = function()
 					Snacks.debug.backtrace()
-				end
-
-				-- Override print to use snacks for `:=` command
-				if vim.fn.has("nvim-0.11") == 1 then
-					vim._print = function(_, ...)
-						dd(...)
-					end
-				else
-					vim.print = _G.dd
 				end
 
 				-- Create some toggle mappings
