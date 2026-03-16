@@ -1,12 +1,10 @@
--- Maybe it is a good idea to move to Snacks for most of QoL things
--- and replace Telescope, nvin-tree, alpha, etc
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
 	lazy = false,
 	opts = {
 		bigfile = { enabled = true },
-		dashboard = { enabled = true },
+		dashboard = require("viktor.plugins.snacks.dashboard"),
 		explorer = { enabled = true },
 		indent = { enabled = true },
 		input = { enabled = true },
