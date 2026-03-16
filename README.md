@@ -13,7 +13,7 @@ Personal Neovim configuration built on **Lazy.nvim** plugin manager with the **T
 | Plugin | Purpose |
 |--------|---------|
 | **tokyonight.nvim** | Tokyo Night color scheme (night variant) |
-| **snacks.nvim (dashboard)** | Startup dashboard with recent files, projects, and git status |
+| **snacks.nvim** | All-in-one QoL: dashboard, explorer, picker, notifications, zen mode, terminal, toggles, and more |
 | **lualine.nvim** | Custom status line with mode colors |
 | **bufferline.nvim** | Tab-like buffer bar at the top |
 | **which-key.nvim** | Keybinding help popup (shows after 500ms) |
@@ -22,9 +22,8 @@ Personal Neovim configuration built on **Lazy.nvim** plugin manager with the **T
 ### Navigation & Search
 | Plugin | Purpose |
 |--------|---------|
-| **telescope.nvim** | Fuzzy finder for files, text, LSP symbols, keymaps, and more |
-| **telescope-fzf-native.nvim** | Native FZF sorting for faster Telescope results |
-| **nvim-tree.lua** | File explorer sidebar with git integration |
+| **snacks.nvim (picker)** | Fuzzy finder for files, grep, LSP symbols, git, keymaps, and more (replaces Telescope) |
+| **snacks.nvim (explorer)** | File explorer sidebar (replaces nvim-tree) |
 | **vim-tmux-navigator** | Seamless `Ctrl+h/j/k/l` navigation between Neovim and tmux panes |
 | **trouble.nvim** | Better diagnostics, quickfix, and location list UI |
 | **todo-comments.nvim** | Highlights and lets you search TODO/FIXME/HACK comments |
@@ -56,107 +55,150 @@ Personal Neovim configuration built on **Lazy.nvim** plugin manager with the **T
 ### Git & Productivity
 | Plugin | Purpose |
 |--------|---------|
-| **vim-fugitive** | Full Git integration via `:Git` commands |
+| **vim-fugitive** | Git commands via `:Git` (blame, commit, diff) |
 | **auto-session** | Auto save/restore editing sessions per directory |
-| **undotree** | Visual undo history tree |
-| **snacks.nvim** | Quality-of-life features: input dialogs, notifications, bigfile mode, word highlighting |
 
 ---
 
 ## All Keybindings
 
-### Core Navigation & Editing
+### Top-Level Quick Access
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `<leader>pv` | Open netrw file explorer | **P**roject **V**iew | You just opened Neovim and want to browse the project directory to find a file |
-| `<leader>nh` | Clear search highlights | **N**o **H**ighlight | You searched for a word with `/`, found it, and now want to dismiss the yellow highlights |
-| `<leader>+` | Increment number under cursor | Plus = bigger | You're editing a CSS `z-index: 10` and want to bump it to 11 without retyping |
-| `<leader>-` | Decrement number under cursor | Minus = smaller | You have `margin: 5px` and want to reduce it to 4 quickly |
+| `<leader><space>` | Smart find files | Space = quick access | Fast file switching — the most common action |
+| `<leader>,` | Open buffers list | Comma = pause and pick | You have several files open and want to switch between them |
+| `<leader>/` | Grep across project | Slash = search (like `/` in Vim) | You want to search for a string across all files |
+| `<leader>:` | Command history | Colon = command mode | You want to re-run a previous `:` command |
+| `<leader>e` | Toggle file explorer | **E**xplorer | You want to browse the project tree |
+| `<leader>.` | Toggle scratch buffer | Dot = scratchpad | You need a quick throwaway buffer for notes or calculations |
+| `<leader>S` | Select scratch buffer | Capital **S**cratch | You have multiple scratch buffers and want to pick one |
+| `<leader>n` | Notification history | **N**otifications | You want to review past notifications |
+| `<leader>N` | Neovim news | **N**ews (capital) | You want to read the latest Neovim changelog |
+
+### Core Editing
+
+| Keys | Description | Mnemonic | Use Case |
+|------|-------------|----------|----------|
+| `<leader>+` | Increment number under cursor | Plus = bigger | You're editing a CSS `z-index: 10` and want to bump it to 11 |
+| `<leader>-` | Decrement number under cursor | Minus = smaller | You have `margin: 5px` and want to reduce it to 4 |
+| `<leader>bd` | Delete buffer | **B**uffer **D**elete | Close a buffer without messing up your window layout |
 
 ### Window Splits
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `<leader>sv` | Split window vertically | **S**plit **V**ertical | You want to see `index.ts` and `styles.css` side by side while styling a component |
-| `<leader>sh` | Split window horizontally | **S**plit **H**orizontal | You want a test file below and the source file above for test-driven development |
-| `<leader>se` | Make all splits equal size | **S**plit **E**qual | After resizing splits manually, you want to reset them to even proportions |
-| `<leader>sx` | Close current split | **S**plit e**X**it | You're done comparing two files and want to go back to a single pane |
+| `<leader>wv` | Split window vertically | **W**indow **V**ertical | You want to see two files side by side |
+| `<leader>wh` | Split window horizontally | **W**indow **H**orizontal | You want a test file below and source above |
+| `<leader>we` | Make all splits equal size | **W**indow **E**qual | Reset splits to even proportions |
+| `<leader>wx` | Close current split | **W**indow e**X**it | Done comparing, go back to single pane |
 
 ### Tabs
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `<leader>to` | Open new tab | **T**ab **O**pen | You want a separate workspace for a different feature while keeping your current layout |
-| `<leader>tx` | Close current tab | **T**ab e**X**it (X = close) | You finished working on a side task and want to close that tab |
-| `<leader>tn` | Go to next tab | **T**ab **N**ext | You have frontend code in tab 1 and backend in tab 2, and want to switch forward |
-| `<leader>tp` | Go to previous tab | **T**ab **P**revious | You just went to the next tab but realized you need the previous one |
-| `<leader>tf` | Open current buffer in new tab | **T**ab **F**ile (this file in a new tab) | You want to focus on one file fullscreen in its own tab without losing your split layout |
+| `<leader>to` | Open new tab | **T**ab **O**pen | Separate workspace for a different feature |
+| `<leader>tx` | Close current tab | **T**ab e**X**it | Finished a side task, close its tab |
+| `<leader>tn` | Go to next tab | **T**ab **N**ext | Switch to the next tab |
+| `<leader>tp` | Go to previous tab | **T**ab **P**revious | Switch to the previous tab |
+| `<leader>tf` | Open current buffer in new tab | **T**ab **F**ile | Focus on one file fullscreen without losing split layout |
 
-### File Explorer (NvimTree)
-
-| Keys | Description | Mnemonic | Use Case |
-|------|-------------|----------|----------|
-| `<leader>ee` | Toggle file explorer | **E**xplorer **E**nable/toggle | You want to browse the project tree to get an overview of the folder structure |
-| `<leader>ef` | Find current file in explorer | **E**xplorer **F**ind | You're editing a deeply nested file and want to see where it sits in the tree |
-| `<leader>ec` | Collapse all folders in explorer | **E**xplorer **C**ollapse | The tree is fully expanded and cluttered; collapse everything to start fresh |
-| `<leader>er` | Refresh file explorer | **E**xplorer **R**efresh | You created files from the terminal and the tree hasn't updated yet |
-
-### Telescope (Fuzzy Finder)
+### Find (Snacks Picker)
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `<leader>ff` | Find files by name | **F**ind **F**iles | You know a file is called `userService.ts` but don't remember the path |
-| `<leader>fr` | Find recently opened files | **F**ind **R**ecent | You were editing a config file earlier today and want to jump back to it |
-| `<leader>fs` | Live grep (search text in all files) | **F**ind **S**tring | You want to find every file that references `handleSubmit` across the project |
-| `<leader>fc` | Grep the word under cursor | **F**ind under **C**ursor | Your cursor is on `UserContext` and you want to see all usages instantly |
-| `<leader>ft` | Find TODO/FIXME comments | **F**ind **T**odos | Before a release, you want to check if there are any outstanding TODOs left |
-| `<leader>fk` | Find and search keymaps | **F**ind **K**eymaps | You forgot a keybinding and want to search for it by description |
+| `<leader>ff` | Find files | **F**ind **F**iles | Find a file by name |
+| `<leader>fr` | Find recent files | **F**ind **R**ecent | Jump back to a file you edited earlier |
+| `<leader>fb` | Find open buffers | **F**ind **B**uffers | Switch between open files |
+| `<leader>fc` | Find config files | **F**ind **C**onfig | Quickly edit your Neovim config files |
+| `<leader>fg` | Find git files | **F**ind **G**it files | Find files tracked by git (ignores untracked) |
+| `<leader>fp` | Find projects | **F**ind **P**rojects | Switch between recent projects |
 
-**Inside Telescope picker:**
+### Search (Snacks Picker)
 
-| Keys | Description | Mnemonic |
-|------|-------------|----------|
-| `Ctrl+j` | Move to next result | **j** = down (Vim convention) |
-| `Ctrl+k` | Move to previous result | **k** = up (Vim convention) |
-| `Ctrl+q` | Send results to quickfix via Trouble | **q** = quickfix |
-| `Ctrl+t` | Open results in Trouble | **t** = Trouble |
+| Keys | Description | Mnemonic | Use Case |
+|------|-------------|----------|----------|
+| `<leader>sg` | Grep across project | **S**earch **G**rep | Find all occurrences of a string in the codebase |
+| `<leader>sw` | Grep word under cursor / selection | **S**earch **W**ord | Cursor on `handleClick`, instantly see all usages |
+| `<leader>sb` | Search buffer lines | **S**earch **B**uffer lines | Fuzzy-find a line in the current file |
+| `<leader>sB` | Grep across open buffers | **S**earch open **B**uffers | Search text only in files you have open |
+| `<leader>sd` | Search diagnostics (workspace) | **S**earch **D**iagnostics | See all errors/warnings across the project |
+| `<leader>sD` | Search diagnostics (buffer) | **S**earch buffer **D**iagnostics | See errors/warnings in just the current file |
+| `<leader>sk` | Search keymaps | **S**earch **K**eymaps | Forgot a keybinding? Search by description |
+| `<leader>sh` | Search help pages | **S**earch **H**elp | Look up Neovim help documentation |
+| `<leader>sH` | Search highlights | **S**earch **H**ighlights (capital) | Inspect highlight groups for theme tweaking |
+| `<leader>si` | Search icons | **S**earch **I**cons | Find a Nerd Font icon by name |
+| `<leader>sj` | Search jump list | **S**earch **J**umps | Navigate your jump history |
+| `<leader>sl` | Search location list | **S**earch **L**ocation list | Browse the location list with fuzzy search |
+| `<leader>sm` | Search marks | **S**earch **M**arks | Find a mark you set earlier |
+| `<leader>sM` | Search man pages | **S**earch **M**an pages | Look up system documentation |
+| `<leader>sp` | Search plugin specs | **S**earch **P**lugin | Inspect your installed Lazy.nvim plugins |
+| `<leader>sq` | Search quickfix list | **S**earch **Q**uickfix | Browse the quickfix list |
+| `<leader>sR` | Resume last search | **S**earch **R**esume | Re-open the last picker with previous results |
+| `<leader>su` | Search undo history | **S**earch **U**ndo | Browse and restore from undo history |
+| `<leader>s"` | Search registers | **S**earch registers (`"`) | See what's in your yank/paste registers |
+| `<leader>s/` | Search history | **S**earch `/` history | Browse your previous search patterns |
+| `<leader>sa` | Search autocmds | **S**earch **A**utocmds | Inspect active autocommands |
+| `<leader>sc` | Search command history | **S**earch **C**ommand history | Browse previous `:` commands |
+| `<leader>sC` | Search commands | **S**earch **C**ommands (capital) | Fuzzy-find any available command |
+| `<leader>ss` | Search LSP symbols | **S**earch **S**ymbols | Find functions, classes, variables in current file |
+| `<leader>sS` | Search workspace symbols | **S**earch workspace **S**ymbols | Find symbols across the entire project |
+
+### Git (Snacks Picker + Lazygit)
+
+| Keys | Description | Mnemonic | Use Case |
+|------|-------------|----------|----------|
+| `<leader>gg` | Open Lazygit | **G**it **G**o (full TUI) | Full interactive git UI for staging, committing, rebasing |
+| `<leader>gs` | Git status | **G**it **S**tatus | Quick view of changed/staged files |
+| `<leader>gb` | Git branches | **G**it **B**ranches | Switch between or search branches |
+| `<leader>gl` | Git log | **G**it **L**og | Browse commit history for the entire repo |
+| `<leader>gL` | Git log (line) | **G**it **L**og line (capital) | See commit history for the current line |
+| `<leader>gf` | Git log (file) | **G**it log **F**ile | See commit history for the current file |
+| `<leader>gd` | Git diff (hunks) | **G**it **D**iff | Browse changed hunks across the repo |
+| `<leader>gS` | Git stash | **G**it **S**tash (capital) | Browse and apply stashed changes |
+| `<leader>gB` | Git browse (open on GitHub) | **G**it **B**rowse (capital) | Open current file/line on GitHub in your browser |
+| `<leader>gi` | GitHub issues (open) | **G**it **I**ssues | Browse open issues for the repo |
+| `<leader>gI` | GitHub issues (all) | **G**it **I**ssues (capital = all) | Browse all issues including closed |
+| `<leader>gp` | GitHub PRs (open) | **G**it **P**ull requests | Browse open pull requests |
+| `<leader>gP` | GitHub PRs (all) | **G**it **P**ull requests (capital = all) | Browse all PRs including merged/closed |
 
 ### LSP (Language Server)
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `gd` | Go to definition | **G**o to **D**efinition | You see `calculateTotal()` being called and want to jump to where it's defined |
-| `gD` | Go to declaration | **G**o to **D**eclaration (capital = higher-level) | You want to see where a variable or type is declared (e.g., an interface) |
-| `gR` | Show all references | **G**o to **R**eferences | You want to know every place in the project that calls `validateEmail()` |
-| `gi` | Show implementations | **G**o to **I**mplementation | You have an interface `Logger` and want to see all classes that implement it |
-| `gt` | Show type definitions | **G**o to **T**ype | Your cursor is on a variable and you want to see the type/interface it uses |
-| `K` | Hover documentation | **K** = look up (Vim convention) | You want to see the function signature, parameter types, and JSDoc without leaving the file |
-| `<leader>ca` | Code actions | **C**ode **A**ction | A squiggly underline suggests an import is missing; open actions to auto-import |
-| `<leader>rn` | Rename symbol | **R**e**N**ame | You want to rename `getData` to `fetchUserData` across every file that uses it |
-| `<leader>D` | Buffer diagnostics (Telescope) | **D**iagnostics (capital = full buffer) | You want to see all errors and warnings in the current file in a searchable list |
-| `<leader>d` | Line diagnostics (float) | **d**iagnostics (lowercase = single line) | There's a red squiggly on a line and you want to read the full error message |
-| `[d` | Previous diagnostic | **[** = backward, **d** = diagnostic | You're fixing errors top to bottom and want to jump to the previous one you skipped |
-| `]d` | Next diagnostic | **]** = forward, **d** = diagnostic | You fixed an error and want to hop to the next one without scrolling |
-| `<leader>rs` | Restart LSP | **R**estart **S**erver | The LSP is acting up (stale errors, no completions) and you want to restart it |
+| `gd` | Go to definition | **G**o to **D**efinition | Jump to where a function is defined |
+| `gD` | Go to declaration | **G**o to **D**eclaration (capital) | See where a variable or type is declared |
+| `gr` | Show all references | **G**o to **R**eferences | Find every place that calls a function |
+| `gI` | Show implementations | **G**o to **I**mplementation (capital) | See all classes implementing an interface |
+| `gy` | Show type definitions | **G**o to t**Y**pe | See the type/interface a variable uses |
+| `gai` | Incoming calls | **G**o **A**nalysis **I**ncoming | See what calls this function |
+| `gao` | Outgoing calls | **G**o **A**nalysis **O**utgoing | See what this function calls |
+| `K` | Hover documentation | **K** = look up (Vim convention) | Read function signature and docs inline |
+| `<leader>ca` | Code actions | **C**ode **A**ction | Auto-fix, auto-import, refactor suggestions |
+| `<leader>cR` | Rename file (LSP-aware) | **C**ode **R**ename file | Rename a file and auto-update all imports |
+| `<leader>rn` | Rename symbol | **R**e**N**ame | Rename a variable/function across all files |
+| `<leader>d` | Line diagnostics (float) | **d**iagnostics | Read the full error message on the current line |
+| `[d` | Previous diagnostic | **[** = backward | Jump to the previous error/warning |
+| `]d` | Next diagnostic | **]** = forward | Jump to the next error/warning |
+| `<leader>rs` | Restart LSP | **R**estart **S**erver | Fix a stuck LSP |
 
 ### Completion (Insert Mode)
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `Ctrl+j` | Select next completion item | **j** = down | You're scrolling through suggestions and want the next one |
-| `Ctrl+k` | Select previous completion item | **k** = up | You scrolled past the right suggestion and want to go back |
-| `Ctrl+b` | Scroll docs up | **B**ack (up in docs) | A function's documentation is long and you want to scroll up |
-| `Ctrl+f` | Scroll docs down | **F**orward (down in docs) | You want to read more of the documentation below |
-| `Ctrl+Space` | Trigger completion manually | Space = summon menu | Autocomplete didn't appear and you want to force it open |
-| `Ctrl+e` | Close completion menu | **E**xit / **E**scape | The suggestions are distracting and you want to dismiss them |
-| `Enter` | Confirm selection | Enter = accept | You see the right suggestion highlighted and want to insert it |
+| `Ctrl+j` | Select next completion item | **j** = down | Scroll to the next suggestion |
+| `Ctrl+k` | Select previous completion item | **k** = up | Go back to the previous suggestion |
+| `Ctrl+b` | Scroll docs up | **B**ack | Scroll up in the documentation popup |
+| `Ctrl+f` | Scroll docs down | **F**orward | Scroll down in the documentation popup |
+| `Ctrl+Space` | Trigger completion manually | Space = summon | Force the completion menu open |
+| `Ctrl+e` | Close completion menu | **E**xit | Dismiss the completion popup |
+| `Enter` | Confirm selection | Enter = accept | Insert the highlighted suggestion |
 
 ### Formatting
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `<leader>mp` | Format file or selection | **M**ake **P**retty | You pasted code from StackOverflow and the indentation is a mess |
+| `<leader>mp` | Format file or selection | **M**ake **P**retty | Fix indentation and formatting |
 
 ### Surround (nvim-surround)
 
@@ -166,17 +208,17 @@ Three core operators: **y**ou **s**urround (add), **d**elete **s**urround (delet
 
 | Keys | Example Before | Example After | Mnemonic | Use Case |
 |------|---------------|---------------|----------|----------|
-| `ysiw)` | `hello` | `(hello)` | **Y**ou **S**urround **I**nner **W**ord with `)` | You're wrapping a variable in a function call like `print(hello)` |
-| `ysiw(` | `hello` | `( hello )` | Same but `)` = tight, `(` = spaced | You want padded parens for readability: `assert( value )` |
-| `ysiw]` | `hello` | `[hello]` | Closing bracket = no spaces | You're making an array index like `arr[index]` |
-| `ysiw[` | `hello` | `[ hello ]` | Opening bracket = with spaces | You want spaced brackets for a template expression |
-| `ysiw"` | `hello` | `"hello"` | Surround word with double quotes | You need to turn a bare word into a string: `"hello"` |
-| `ysiw'` | `hello` | `'hello'` | Surround word with single quotes | You're wrapping a key in single quotes for a dictionary |
-| `ysiw}` | `hello` | `{hello}` | Closing brace = tight | You're wrapping a variable in JSX: `{hello}` |
-| `ysiw{` | `hello` | `{ hello }` | Opening brace = spaced | You want spaced braces like in a JS object destructure |
-| `ys$"` | `make strings` | `"make strings"` | Surround from cursor to end of line | You want to quote everything from cursor to end of the line |
-| `ysiw<tag>` | `hello` | `<tag>hello</tag>` | Surround word with HTML tag | You're wrapping text in `<span>hello</span>` |
-| `yssb` or `yss)` | `hello world` | `(hello world)` | **S**urround whole **S**entence (line) with **b**rackets | You want to wrap an entire line in parentheses |
+| `ysiw)` | `hello` | `(hello)` | **Y**ou **S**urround **I**nner **W**ord with `)` | Wrapping a variable in a function call |
+| `ysiw(` | `hello` | `( hello )` | `)` = tight, `(` = spaced | Padded parens for readability |
+| `ysiw]` | `hello` | `[hello]` | Closing bracket = no spaces | Making an array index |
+| `ysiw[` | `hello` | `[ hello ]` | Opening bracket = with spaces | Spaced brackets for templates |
+| `ysiw"` | `hello` | `"hello"` | Surround with double quotes | Turn a bare word into a string |
+| `ysiw'` | `hello` | `'hello'` | Surround with single quotes | Wrap a dictionary key |
+| `ysiw}` | `hello` | `{hello}` | Closing brace = tight | Wrap in JSX expression |
+| `ysiw{` | `hello` | `{ hello }` | Opening brace = spaced | JS object destructure |
+| `ys$"` | `make strings` | `"make strings"` | Cursor to end of line | Quote everything to EOL |
+| `ysiw<tag>` | `hello` | `<tag>hello</tag>` | Surround with HTML tag | Wrap text in `<span>` |
+| `yssb` or `yss)` | `hello world` | `(hello world)` | Whole line with brackets | Wrap entire line in parens |
 
 > **Tip:** Closing bracket `)`/`]`/`}` = tight (no spaces). Opening bracket `(`/`[`/`{` = padded (with spaces).
 
@@ -184,119 +226,131 @@ Three core operators: **y**ou **s**urround (add), **d**elete **s**urround (delet
 
 | Keys | Example Before | Example After | Mnemonic | Use Case |
 |------|---------------|---------------|----------|----------|
-| `ds"` | `"hello"` | `hello` | **D**elete **S**urround `"` | You want to remove quotes from a string you're inlining |
-| `ds'` | `'hello'` | `hello` | **D**elete **S**urround `'` | Removing quotes from a dictionary key |
-| `ds)` | `(hello)` | `hello` | **D**elete **S**urround `)` | You're unwrapping a value from a function call |
-| `ds]` | `[hello]` | `hello` | **D**elete **S**urround `]` | Removing brackets from an array index |
-| `ds}` | `{hello}` | `hello` | **D**elete **S**urround `}` | Removing braces from a JSX expression |
-| `dst` | `<b>hello</b>` | `hello` | **D**elete **S**urround **T**ag | You want to strip an HTML tag but keep the text content |
-| `dsf` | `print(hello)` | `hello` | **D**elete **S**urround **F**unction | You want to remove a function call but keep the argument |
+| `ds"` | `"hello"` | `hello` | **D**elete **S**urround `"` | Remove quotes from a string |
+| `ds'` | `'hello'` | `hello` | **D**elete **S**urround `'` | Remove single quotes |
+| `ds)` | `(hello)` | `hello` | **D**elete **S**urround `)` | Unwrap from a function call |
+| `ds]` | `[hello]` | `hello` | **D**elete **S**urround `]` | Remove array brackets |
+| `ds}` | `{hello}` | `hello` | **D**elete **S**urround `}` | Remove braces |
+| `dst` | `<b>hello</b>` | `hello` | **D**elete **S**urround **T**ag | Strip an HTML tag, keep content |
+| `dsf` | `print(hello)` | `hello` | **D**elete **S**urround **F**unction | Remove function call, keep argument |
 
 #### Changing Surroundings (`cs` — **C**hange **S**urround)
 
 | Keys | Example Before | Example After | Mnemonic | Use Case |
 |------|---------------|---------------|----------|----------|
-| `cs'"` | `'hello'` | `"hello"` | **C**hange **S**urround `'` to `"` | Switching from single to double quotes to match project style |
-| `cs"'` | `"hello"` | `'hello'` | **C**hange **S**urround `"` to `'` | Switching to single quotes for a JS string |
-| `cs)]` | `(hello)` | `[hello]` | **C**hange **S**urround `)` to `]` | Switching from function args to array brackets |
-| `cs)}` | `(hello)` | `{hello}` | **C**hange **S**urround `)` to `}` | Changing parens to braces for a JSX expression |
-| `cs)>` | `(hello)` | `<hello>` | **C**hange **S**urround `)` to `>` | Wrapping in angle brackets |
-| `csth1` | `<b>hello</b>` | `<h1>hello</h1>` | **C**hange **S**urround **T**ag to `h1` | Changing an HTML tag type (e.g., `<b>` to `<h1>`) |
-| `cs"f` | `"hello"` | `func("hello")` | **C**hange **S**urround `"` to **F**unction | Wrapping a quoted string in a function call |
+| `cs'"` | `'hello'` | `"hello"` | **C**hange `'` to `"` | Switch quote style |
+| `cs"'` | `"hello"` | `'hello'` | **C**hange `"` to `'` | Switch to single quotes |
+| `cs)]` | `(hello)` | `[hello]` | **C**hange `)` to `]` | Parens to brackets |
+| `cs)}` | `(hello)` | `{hello}` | **C**hange `)` to `}` | Parens to braces |
+| `cs)>` | `(hello)` | `<hello>` | **C**hange `)` to `>` | Parens to angle brackets |
+| `csth1` | `<b>hello</b>` | `<h1>hello</h1>` | **C**hange **T**ag to `h1` | Change HTML tag type |
+| `cs"f` | `"hello"` | `func("hello")` | **C**hange `"` to **F**unction | Wrap quoted string in function call |
 
 #### Visual Mode Surround (`S`)
 
 | Keys | Description | Use Case |
 |------|-------------|----------|
-| `v` + select + `S"` | Surround visual selection with `"` | You selected a multi-word expression and want to wrap it in quotes |
-| `v` + select + `S)` | Surround visual selection with `()` | You selected an expression and want to wrap it in parentheses |
-| `v` + select + `S<tag>` | Surround visual selection with HTML tag | You selected text and want to wrap it in `<div>...</div>` |
-| `V` + select + `S{` | Surround selected lines with `{ }` | You selected a block of code and want to wrap it in braces (e.g., adding an `if` body) |
-
-### Git
-
-| Keys | Description | Mnemonic | Use Case |
-|------|-------------|----------|----------|
-| `<leader>gs` | Open Git status (Fugitive) | **G**it **S**tatus | You want to see what files are staged/unstaged before committing |
+| `v` + select + `S"` | Surround selection with `"` | Wrap multi-word expression in quotes |
+| `v` + select + `S)` | Surround selection with `()` | Wrap expression in parentheses |
+| `v` + select + `S<tag>` | Surround selection with HTML tag | Wrap text in `<div>...</div>` |
+| `V` + select + `S{` | Surround selected lines with `{ }` | Wrap a code block in braces |
 
 ### Trouble (Diagnostics UI)
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `<leader>xw` | Workspace diagnostics | e**X**amine **W**orkspace | You want to see all errors across the entire project, not just the current file |
-| `<leader>xd` | Document diagnostics | e**X**amine **D**ocument | You want a persistent list of all errors in just the current file |
-| `<leader>xq` | Toggle quickfix list | e**X**amine **Q**uickfix | You ran a project-wide search-replace and want to review all locations |
-| `<leader>xl` | Toggle location list | e**X**amine **L**ocation list | You want to navigate through a list of locations from a specific tool |
-| `<leader>xt` | Toggle TODO list | e**X**amine **T**odos | You want to see all TODO comments in a nice filterable panel |
+| `<leader>xx` | Toggle all diagnostics | e**X**amine e**X**pand | See all errors across the project in a persistent panel |
+| `<leader>xX` | Toggle buffer diagnostics | e**X**amine buffer | See errors in just the current file |
+| `<leader>cs` | Toggle symbols | **C**ode **S**ymbols | Browse all symbols in the file via Trouble |
+| `<leader>cl` | LSP defs/refs | **C**ode **L**SP | See definitions and references in a side panel |
+| `<leader>xL` | Toggle location list | e**X**amine **L**ocation | Browse location list |
+| `<leader>xQ` | Toggle quickfix list | e**X**amine **Q**uickfix | Browse quickfix results |
+
+### Toggles
+
+| Keys | Description | Mnemonic | Use Case |
+|------|-------------|----------|----------|
+| `<leader>us` | Toggle spelling | toggle **S**pelling | Enable spell-check while writing docs/comments |
+| `<leader>uw` | Toggle word wrap | toggle **W**rap | Toggle line wrapping for long lines |
+| `<leader>ul` | Toggle line numbers | toggle **L**ine numbers | Show/hide line numbers |
+| `<leader>uL` | Toggle relative numbers | toggle re**L**ative (capital) | Switch between absolute and relative numbers |
+| `<leader>ud` | Toggle diagnostics | toggle **D**iagnostics | Temporarily hide all squiggly error lines |
+| `<leader>uc` | Toggle conceal level | toggle **C**onceal | Show/hide concealed characters (e.g., in markdown) |
+| `<leader>uT` | Toggle treesitter | toggle **T**reesitter | Disable syntax highlighting for troubleshooting |
+| `<leader>ub` | Toggle dark/light background | toggle **B**ackground | Switch between dark and light mode |
+| `<leader>uh` | Toggle inlay hints | toggle **H**ints | Show/hide LSP inlay type hints |
+| `<leader>ug` | Toggle indent guides | toggle indent **G**uides | Show/hide indentation guide lines |
+| `<leader>uD` | Toggle dim mode | toggle **D**im (capital) | Dim inactive code scopes to focus on current function |
+| `<leader>uC` | Colorscheme picker | toggle **C**olorscheme | Try different color schemes |
+| `<leader>un` | Dismiss all notifications | **U**ndo **N**otifications | Clear notification popups |
+
+### Zen & Focus
+
+| Keys | Description | Mnemonic | Use Case |
+|------|-------------|----------|----------|
+| `<leader>z` | Toggle Zen mode | **Z**en | Distraction-free coding — hides UI chrome |
+| `<leader>Z` | Toggle Zoom | **Z**oom (capital) | Maximize current window temporarily |
+
+### Terminal & Navigation
+
+| Keys | Description | Mnemonic | Use Case |
+|------|-------------|----------|----------|
+| `Ctrl+/` | Toggle terminal | Slash = terminal prompt | Quick terminal access without leaving Neovim |
+| `]]` | Next word reference | Forward jump | Jump to next occurrence of the word under cursor |
+| `[[` | Previous word reference | Backward jump | Jump to previous occurrence of the word under cursor |
+| `Ctrl+h` | Move to left pane (Neovim or tmux) | **h** = left | Navigate between splits and tmux panes |
+| `Ctrl+j` | Move to pane below | **j** = down | Navigate between splits and tmux panes |
+| `Ctrl+k` | Move to pane above | **k** = up | Navigate between splits and tmux panes |
+| `Ctrl+l` | Move to right pane | **l** = right | Navigate between splits and tmux panes |
 
 ### Sessions
 
 | Keys | Description | Mnemonic | Use Case |
 |------|-------------|----------|----------|
-| `<leader>ws` | Save current session | **W**orkspace **S**ave | You're done for the day and want to save all open files, splits, and tabs |
-| `<leader>wr` | Restore last session | **W**orkspace **R**estore | You open Neovim in a project and want to pick up exactly where you left off |
-
-### Undo
-
-| Keys | Description | Mnemonic | Use Case |
-|------|-------------|----------|----------|
-| `<leader>u` | Toggle undo tree | **U**ndo tree | You hit undo too many times, went past the right point, and want to visually pick the exact state to restore |
-
-### Tmux Navigation
-
-| Keys | Description | Mnemonic |
-|------|-------------|----------|
-| `Ctrl+h` | Move to left pane (Neovim or tmux) | **h** = left (Vim convention) |
-| `Ctrl+j` | Move to pane below | **j** = down |
-| `Ctrl+k` | Move to pane above | **k** = up |
-| `Ctrl+l` | Move to right pane | **l** = right |
+| `<leader>ws` | Save current session | **W**orkspace **S**ave (note: `w` now = workspace, not window) | Save all open files, splits, and tabs |
+| `<leader>wr` | Restore last session | **W**orkspace **R**estore | Pick up exactly where you left off |
 
 ---
 
 ## Mnemonic Cheat Sheet
 
-The keybindings follow a consistent **`<leader>` + prefix + action** pattern. Memorize the prefixes and the actions become intuitive:
+The keybindings follow a consistent **`<leader>` + prefix + action** pattern:
 
 | Prefix | Domain | Think of it as... |
 |--------|--------|-------------------|
-| `s` | **S**plits | "I want to **S**plit my screen" |
+| `w` | **W**indow splits | "I want to manage **W**indows" |
 | `t` | **T**abs | "I want to manage **T**abs" |
-| `e` | **E**xplorer | "I want the file **E**xplorer" |
-| `f` | **F**ind | "I want to **F**ind something" |
-| `w` | **W**orkspace | "I want to manage my **W**orkspace session" |
-| `x` | e**X**amine | "I want to e**X**amine diagnostics/issues" |
-| `g` | **G**it / **G**o | "**G**it stuff or **G**o to definition" |
+| `e` | **E**xplorer | "Open the file **E**xplorer" |
+| `f` | **F**ind | "I want to **F**ind a file" |
+| `s` | **S**earch | "I want to **S**earch for something" |
+| `g` | **G**it | "I want **G**it stuff" |
+| `x` | e**X**amine | "I want to e**X**amine diagnostics (Trouble)" |
 | `c` | **C**ode | "I want a **C**ode action" |
 | `r` | **R**ename / **R**estart | "I want to **R**ename or **R**estart" |
-| `d` / `D` | **D**iagnostics | "Show me **D**iagnostics" |
+| `u` | **U**I toggles | "I want to toggle a **U**I option" |
+| `b` | **B**uffer | "I want to manage **B**uffers" |
 | `m` | **M**ake | "**M**ake it pretty (format)" |
+| `z` | **Z**en | "I want **Z**en / focus mode" |
 
 **Surround operators (no leader key):**
 
 | Operator | Meaning | Remember as... |
 |----------|---------|----------------|
-| `ys` | Add surround | "**Y**ou **S**urround" — you're adding something around text |
-| `ds` | Delete surround | "**D**elete **S**urround" — you're removing the wrapper |
-| `cs` | Change surround | "**C**hange **S**urround" — you're swapping one wrapper for another |
+| `ys` | Add surround | "**Y**ou **S**urround" — adding something around text |
+| `ds` | Delete surround | "**D**elete **S**urround" — removing the wrapper |
+| `cs` | Change surround | "**C**hange **S**urround" — swapping one wrapper for another |
 | `S` (visual) | Surround selection | Capital **S** = **S**urround what I selected |
 
 > **Bracket rule:** Closing `)` `]` `}` = tight, opening `(` `[` `{` = with spaces. Think: "closing is closer (tight), opening makes room (spaced)."
 
-**Common second letters:**
+**LSP navigation (no leader key):**
 
-| Letter | Meaning | Examples |
+| Prefix | Meaning | Examples |
 |--------|---------|---------|
-| `v` | Vertical | `sv` = split vertical |
-| `h` | Horizontal | `sh` = split horizontal |
-| `o` | Open | `to` = tab open |
-| `x` | Close/exit | `sx` = split exit, `tx` = tab exit |
-| `n` | Next | `tn` = tab next |
-| `p` | Previous | `tp` = tab previous |
-| `f` | Find/file | `ff` = find files, `ef` = explorer find, `tf` = tab file |
-| `r` | Recent/refresh/restore | `fr` = find recent, `er` = explorer refresh, `wr` = workspace restore |
-| `s` | String/save/status | `fs` = find string, `ws` = workspace save, `gs` = git status |
-| `c` | Cursor/collapse | `fc` = find cursor word, `ec` = explorer collapse |
-| `e` | Enable/toggle | `ee` = explorer enable |
+| `g` + lowercase | Go to primary target | `gd` = definition, `gr` = references |
+| `g` + uppercase | Go to secondary target | `gD` = declaration, `gI` = implementation |
+| `gy` | Go to t**y**pe | Type definition of symbol under cursor |
+| `ga` + `i`/`o` | Go **a**nalyze calls | `gai` = incoming calls, `gao` = outgoing calls |
 
 ---
 
@@ -304,23 +358,23 @@ The keybindings follow a consistent **`<leader>` + prefix + action** pattern. Me
 
 ### Workflow 1: "I just opened a project and need to find my way around"
 
-1. `<leader>ee` - Open the file explorer to see the project structure
+1. `<leader>e` - Open the file explorer to see the project structure
 2. `<leader>ff` - Fuzzy find a file by name if you know what you're looking for
-3. `<leader>fs` - Search for a specific string across all files
+3. `<leader>/` - Grep across all files for a string
 4. `<leader>wr` - Restore your previous session if you worked on this project before
 
 ### Workflow 2: "I'm reading unfamiliar code and need to understand it"
 
 1. `gd` - Jump to a function's definition to see what it does
 2. `K` - Hover over a symbol to read its documentation and signature
-3. `gR` - See everywhere this function is called to understand its usage patterns
-4. `gi` - Check what classes implement an interface
-5. `gt` - Look up what type a variable is
-6. `<leader>u` - Use undo tree if you accidentally changed something while exploring
+3. `gr` - See everywhere this function is called to understand usage patterns
+4. `gI` - Check what classes implement an interface
+5. `gy` - Look up what type a variable is
+6. `gai` - See what calls this function (incoming calls)
 
 ### Workflow 3: "I'm writing new code"
 
-1. `<leader>sv` - Split vertically to have a reference file open beside your new code
+1. `<leader>wv` - Split vertically to have a reference file open beside your new code
 2. Start typing and use `Ctrl+Space` to trigger completion if it doesn't appear
 3. `Ctrl+j`/`Ctrl+k` - Navigate completion suggestions
 4. `Enter` - Accept the right suggestion
@@ -329,7 +383,7 @@ The keybindings follow a consistent **`<leader>` + prefix + action** pattern. Me
 
 ### Workflow 4: "I need to fix bugs and errors"
 
-1. `<leader>xw` - Open workspace diagnostics to see all errors across the project
+1. `<leader>sd` - Search workspace diagnostics to see all errors across the project
 2. `]d` - Jump to the next diagnostic in the current file
 3. `<leader>d` - Read the full error message on the current line
 4. `<leader>ca` - Open code actions to see if there's an auto-fix available
@@ -340,40 +394,47 @@ The keybindings follow a consistent **`<leader>` + prefix + action** pattern. Me
 ### Workflow 5: "I'm committing my changes"
 
 1. `<leader>gs` - Open Git status to see changed files
-2. In the Fugitive window: `s` to stage, `u` to unstage, `cc` to commit
-3. `<leader>ft` - Check for any remaining TODOs before committing
-4. `<leader>xw` - Make sure there are no errors left in the workspace
+2. `<leader>gg` - Open Lazygit for full staging, committing, and pushing
+3. `<leader>gl` - Browse git log to review recent commits
+4. `<leader>gd` - Review diff hunks before committing
 
 ### Workflow 6: "I want to compare or work on two things at once"
 
-1. `<leader>sv` - Split vertically for side-by-side files
-2. `<leader>sh` - Split horizontally for top/bottom layout
+1. `<leader>wv` - Split vertically for side-by-side files
+2. `<leader>wh` - Split horizontally for top/bottom layout
 3. `Ctrl+h/j/k/l` - Move between splits (works across tmux panes too)
-4. `<leader>se` - Equalize split sizes if they get uneven
+4. `<leader>we` - Equalize split sizes if they get uneven
 5. `<leader>tf` - Pop the current file into its own tab for focused work
 6. `<leader>tn`/`<leader>tp` - Switch between tabs
-7. `<leader>sx` - Close a split when done comparing
+7. `<leader>wx` - Close a split when done comparing
 
 ### Workflow 7: "I made a mess and need to undo carefully"
 
-1. `<leader>u` - Open the undo tree to visualize your entire edit history
-2. Navigate the tree to find the exact state you want
-3. Press `Enter` on the desired state to restore it
-4. `<leader>u` - Close the undo tree when done
+1. `<leader>su` - Open undo history to browse and search past states
+2. Select the state you want to restore
+3. Confirm to jump back to that point
 
 ### Workflow 8: "I need to refactor surroundings (quotes, brackets, tags)"
 
-1. `cs'"` - Change single quotes to double quotes across your code
+1. `cs'"` - Change single quotes to double quotes
 2. `dst` - Strip an unnecessary HTML wrapper tag but keep its content
-3. `ysiw)` - Wrap a variable name in parentheses to pass it as a function argument
+3. `ysiw)` - Wrap a variable name in parentheses for a function call
 4. `dsf` - Remove a function wrapper like `String(value)` to just `value`
-5. Visually select a block with `V`, then `S{` to wrap it in braces for a new `if` block
+5. Visually select a block with `V`, then `S{` to wrap it in braces
 6. `csth1` - Change a `<div>` to an `<h1>` tag
 7. `ysiw"` - Wrap a bare word in quotes to turn it into a string literal
 
-### Workflow 9: "End of day wrap-up"
+### Workflow 9: "I need to focus and minimize distractions"
 
-1. `<leader>ft` - Review remaining TODOs
-2. `<leader>xw` - Check that no diagnostics are left unresolved
-3. `<leader>ws` - Save your session so you can restore it tomorrow
-4. `<leader>gs` - Final check on Git status
+1. `<leader>z` - Enter Zen mode for distraction-free coding
+2. `<leader>Z` - Zoom the current window to full screen
+3. `<leader>uD` - Dim inactive code to focus on the current function
+4. `<leader>ud` - Temporarily disable diagnostics if they're noisy
+5. `<leader>z` - Exit Zen mode when done
+
+### Workflow 10: "End of day wrap-up"
+
+1. `<leader>sd` - Check that no diagnostics are left unresolved
+2. `<leader>gs` - Review git status
+3. `<leader>gg` - Open Lazygit to stage and commit remaining changes
+4. `<leader>ws` - Save your session so you can restore it tomorrow
