@@ -438,3 +438,300 @@ The keybindings follow a consistent **`<leader>` + prefix + action** pattern:
 2. `<leader>gs` - Review git status
 3. `<leader>gg` - Open Lazygit to stage and commit remaining changes
 4. `<leader>ws` - Save your session so you can restore it tomorrow
+
+---
+
+## Vim Motions & Editing Cheat Sheet
+
+### Scrolling & Navigation
+
+| Action | Command | Mnemonic |
+|---|---|---|
+| Half page down | `Ctrl+d` | **D**own |
+| Half page up | `Ctrl+u` | **U**p |
+| Full page down | `Ctrl+f` | **F**orward |
+| Full page up | `Ctrl+b` | **B**ackward |
+| Scroll down (keep cursor) | `Ctrl+e` | **E**xpose next line below |
+| Scroll up (keep cursor) | `Ctrl+y` | **Y** is above U on keyboard — "up" |
+| Go to top of file | `gg` | **G**o **G**o — double tap = go to start |
+| Go to bottom of file | `G` | **G**o to the end (single = bottom) |
+| Go to line 42 | `42G` or `:42` | **G**o to line number |
+| Center current line on screen | `zz` | **z** = reposition screen; **z** again = center (middle of the alphabet ≈ middle of screen) |
+| Current line to top of screen | `zt` | **z** reposition + **t**op |
+| Current line to bottom of screen | `zb` | **z** reposition + **b**ottom |
+
+### Registers (the key to copy/paste in Vim)
+
+Vim has multiple "registers" (clipboards). By default, when you delete or yank text, it goes into the unnamed register `"`. This is why deleting something overwrites what you previously copied.
+
+**The fix: use named registers.** Prefix any yank/delete/paste with `"x` where `x` is any letter a-z.
+
+| Scenario | Command | What it does |
+|---|---|---|
+| Copy a line and keep it safe | `"ayy` | Yank current line into register `a` |
+| Paste from that register | `"ap` | Paste contents of register `a` |
+| Delete without overwriting your clipboard | `"_dd` | Delete line into the **black hole register** (thrown away) |
+| Delete a word without overwriting clipboard | `"_dw` | Same idea — delete word, clipboard untouched |
+
+**Tip:** `"_` (black hole register) is your best friend. Use it whenever you want to delete something without losing what you copied.
+
+### Copying (Yanking)
+
+| Scenario | Command | What it does |
+|---|---|---|
+| Copy current line | `yy` | Yank entire line |
+| Copy 3 lines | `3yy` | Yank current line + 2 below |
+| Copy a word | `yw` | Yank from cursor to end of word |
+| Copy to end of line | `y$` or `Y` | Yank from cursor to end of line |
+| Copy inside quotes | `yi"` | Yank text inside `"..."` |
+| Copy inside parentheses | `yi(` | Yank text inside `(...)` |
+| Copy inside tags | `yit` | Yank text inside HTML/JSX tags |
+| Copy inside curly braces | `yi{` | Yank text inside `{...}` |
+
+### Pasting
+
+| Scenario | Command | What it does |
+|---|---|---|
+| Paste after cursor | `p` | Paste after cursor (or below for lines) |
+| Paste before cursor | `P` | Paste before cursor (or above for lines) |
+| Paste and indent correctly | `]p` | Paste with auto-indent matching |
+
+### Replace Text with Pasted Content
+
+This is the "paste over" workflow — you have something copied and want to replace other text with it.
+
+**Method 1: Visual mode select + paste**
+1. Yank what you need: `yy` or `yiw` (copy line or word)
+2. Move to the text you want to replace
+3. Select it visually: `V` (line), `viw` (word), `vi"` (inside quotes), etc.
+4. Paste over it: `p`
+
+**Problem:** after step 4, the replaced (deleted) text is now in your register, so you can't repeat.
+
+**Method 2: Visual mode + black hole delete + paste (repeatable)**
+1. Yank what you need: `"ayy` (into register `a`)
+2. Move to target text
+3. Select it visually
+4. Paste from register: `"ap`
+
+**Method 3: Using `P` in visual mode**
+1. Yank what you need: `yiw`
+2. Select the word to replace: `viw`
+3. `P` — pastes over selection (in some configs this preserves the original yank)
+
+**Scenario: Replace an entire line**
+- You have `"replace"` copied. You want to replace `"need to replace entire line"`.
+  1. `"ayy` — yank the line with "replace" into register `a`
+  2. Go to the target line
+  3. `V` — select the entire line
+  4. `"ap` — paste register `a` over it
+
+### Deleting
+
+| Scenario | Command | What it does |
+|---|---|---|
+| Delete current line | `dd` | Delete entire line |
+| Delete 3 lines | `3dd` | Delete current + 2 below |
+| Delete word | `dw` | Delete from cursor to start of next word |
+| Delete word (cleaner) | `diw` | Delete entire word cursor is on |
+| Delete 3 words | `d3w` or `3dw` | Delete next 3 words |
+| Delete inside double quotes | `di"` | Delete text inside `"..."` |
+| Delete inside single quotes | `di'` | Delete text inside `'...'` |
+| Delete inside parentheses | `di(` or `dib` | Delete text inside `(...)` |
+| Delete inside curly braces | `di{` or `diB` | Delete text inside `{...}` |
+| Delete inside square brackets | `di[` | Delete text inside `[...]` |
+| Delete inside HTML/JSX tags | `dit` | Delete text inside `<tag>...</tag>` |
+| Delete including quotes | `da"` | Delete text AND the quotes themselves |
+| Delete including tags | `dat` | Delete text AND the surrounding tags |
+| Delete including parentheses | `da(` | Delete text AND the parens |
+| Delete to end of line | `D` or `d$` | Delete from cursor to end of line |
+| Delete character under cursor | `x` | Delete single char |
+| Delete character before cursor | `X` | Backspace equivalent |
+
+### Visual Mode
+
+Visual mode lets you select text, then operate on it.
+
+**Entering visual mode:**
+
+| Command | What it does |
+|---|---|
+| `v` | Character-wise visual mode (select characters) |
+| `V` | Line-wise visual mode (select whole lines) |
+| `Ctrl+v` | Block (column) visual mode (select a rectangle) |
+
+**Selecting chunks of text:**
+
+| Scenario | Command sequence | What it does |
+|---|---|---|
+| Select current word | `viw` | Visual-select inner word |
+| Select current word + surrounding space | `vaw` | Visual-select "a word" (includes space) |
+| Select inside quotes | `vi"` | Select text inside `"..."` |
+| Select inside parens | `vi(` | Select text inside `(...)` |
+| Select inside tags | `vit` | Select text inside HTML/JSX tags |
+| Select inside braces | `vi{` | Select text inside `{...}` |
+| Select a paragraph | `vip` | Select inner paragraph (block of text) |
+| Select 5 lines down | `V4j` | Line-visual, then move down 4 lines |
+| Select to end of line | `v$` | From cursor to end of line |
+| Select entire file | `ggVG` | Go to top, line-visual, go to bottom |
+
+**After selecting, you can:**
+
+| Key | Action |
+|---|---|
+| `y` | Yank (copy) the selection |
+| `d` | Delete the selection |
+| `c` | Change (delete + enter insert mode) |
+| `p` | Paste over the selection |
+| `>` / `<` | Indent / un-indent |
+| `~` | Toggle case |
+| `u` / `U` | Lowercase / uppercase |
+| `:` | Enter command mode for the selection |
+
+### Copy/Paste Chunks of Code
+
+**Copy a function/block:**
+1. Place cursor on the opening `{`
+2. `V%` — line-visual select from `{` to matching `}`
+3. `y` — yank it
+
+**Copy 20 lines starting from current line:**
+1. `V19j` — visual-line select 20 lines
+2. `y` — yank
+
+**Move a block of code:**
+1. Select with `V` + motion
+2. `d` — cut it
+3. Move to destination
+4. `p` — paste
+
+**Duplicate a line:**
+- `yyp` — yank line, paste below
+
+**Duplicate a block:**
+1. `V` + select lines
+2. `y`
+3. `p` — paste below selection
+
+### Motions Quick Reference
+
+| I want to... | Do this |
+|---|---|
+| Copy a line and paste it elsewhere | `yy` → move → `p` |
+| Delete without losing my clipboard | `"_dd` (black hole register) |
+| Replace a word with copied text | `yiw` → move → `viw` → `p` |
+| Replace an entire line with copied text | `"ayy` → move → `V"ap` |
+| Delete everything inside quotes | `di"` |
+| Change text inside tags | `cit` (deletes + enters insert mode) |
+| Copy inside braces and paste elsewhere | `yi{` → move → `p` |
+| Select and copy a block | `V` → select lines → `y` |
+| Swap two words | `yiw` → move to other word → `viwp` → move back → `viwp` |
+
+---
+
+## LazyGit
+
+LazyGit is a terminal UI for git that runs inside Neovim via `<leader>gg`. It has several panes you navigate between with `Tab` or number keys.
+
+### Panes Overview
+
+| Key | Pane | What it shows |
+|---|---|---|
+| `1` | Status | Repo info, upstream |
+| `2` | Files | Changed/staged files (this is where you start) |
+| `3` | Branches | Local and remote branches |
+| `4` | Commits | Commit log for current branch |
+| `5` | Stash | Stashed changes |
+
+### Navigating from the Files Pane
+
+**Opening a file from the changed files pane:**
+
+| Key | What it does |
+|---|---|
+| `e` | **Edit file** — opens the file in your editor (Neovim) and closes LazyGit |
+| `o` | **Open file** — opens the file in your system default app |
+| `Enter` | Expand the file to show individual diff hunks (does NOT open the file) |
+
+So to go from the files pane to the actual file: press `e` on the highlighted file. LazyGit will close and Neovim will open that file.
+
+### Staging & Committing
+
+| Key | What it does |
+|---|---|
+| `Space` | Stage/unstage the highlighted file |
+| `a` | Stage/unstage ALL files |
+| `Enter` | Expand file to see hunks, then `Space` to stage individual hunks |
+| `c` | Open commit message editor (type message, then `Enter` to confirm) |
+| `A` | Amend the last commit |
+| `S` | Squash — select commits then squash them |
+
+### Git Blame & History
+
+**Blame for the current file:**
+
+| Key / Action | What it does |
+|---|---|
+| In Neovim: `:Git blame` | Opens fugitive's blame view — shows who last changed every line, the commit hash, and date |
+| In blame view: `Enter` on a line | Opens the commit that last changed that line |
+| In blame view: `o` on a line | Opens the commit in a split |
+| In Neovim: `<leader>gL` | Git log for the current line — see all commits that touched this specific line |
+| In Neovim: `<leader>gf` | Git log for the current file — see all commits that touched this file |
+
+**Inside LazyGit — viewing blame and history:**
+
+| Key / Action | What it does |
+|---|---|
+| Go to Commits pane (`4`) | See full commit log for the branch |
+| `Enter` on a commit | Show the full diff of that commit |
+| `/` in commits pane | Search commits by message |
+| In Files pane: `Enter` on a file | See the diff; then navigate commits pane to see older versions |
+
+### Drilling Back Through File History (Previous Versions)
+
+**Method 1: From Neovim (recommended for single-file history)**
+1. `<leader>gf` — opens the file's commit log via Snacks picker
+2. Select a commit to see the diff at that point
+3. You can keep scrolling back through older commits
+
+**Method 2: From LazyGit**
+1. `<leader>gg` to open LazyGit
+2. Press `4` to go to the Commits pane
+3. Navigate to the commit you're interested in with `j`/`k`
+4. Press `Enter` to see what files changed in that commit and the diffs
+5. To see the file at that exact point in time, highlight the file and press `o` or `e`
+
+**Method 3: Using fugitive for full blame drill-down**
+1. `:Git blame` — see blame annotations for every line
+2. Press `Enter` on any line to open the commit that last changed it
+3. In that commit view, you can run `:Git blame` again to see the state *before* that commit
+4. Repeat to keep drilling back through time — each `Enter` takes you one layer deeper
+
+**Method 4: Line-level history**
+1. `<leader>gL` — shows all commits that touched the current line
+2. Select any commit to see the diff
+
+### Browsing PRs and Issues
+
+| Key | What it does |
+|---|---|
+| `<leader>gp` | Browse open PRs for the repo (via Snacks GitHub picker) |
+| `<leader>gP` | Browse ALL PRs (including merged/closed) |
+| `<leader>gi` | Browse open issues |
+| `<leader>gI` | Browse all issues (including closed) |
+| `<leader>gB` | Open current file/line on GitHub in browser (great for sharing links) |
+
+### LazyGit Common Workflows
+
+**"I want to see who wrote this code and why"**
+1. `:Git blame` → find the line → `Enter` → read the commit message and diff
+
+**"I want to see what this file looked like 5 commits ago"**
+1. `<leader>gf` → scroll back 5 commits → select to see the diff
+
+**"I want to find which PR introduced a change"**
+1. `:Git blame` on the line → note the commit hash
+2. `<leader>gP` → search for that commit hash or related keywords in PR titles
+
+**"I want to see all recent changes to a file"**
+1. `<leader>gf` — gives you the complete commit history for that file with diffs
