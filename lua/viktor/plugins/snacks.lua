@@ -31,6 +31,11 @@ return {
 			notification = {
 				-- wo = { wrap = true } -- Wrap notifications
 			},
+			terminal = {
+				keys = {
+					["<c-t>"] = { "Toggle current dir terminal", mode = { "n", "t" } },
+				},
+			},
 		},
 	},
 	keys = {

@@ -114,6 +114,18 @@ Personal Neovim configuration built on **Lazy.nvim** plugin manager with the **T
 | `<leader>fg` | Find git files | **F**ind **G**it files | Find files tracked by git (ignores untracked) |
 | `<leader>fp` | Find projects | **F**ind **P**rojects | Switch between recent projects |
 
+### Search (In-File)
+
+| Keys | Description | Mnemonic | Use Case |
+|------|-------------|----------|----------|
+| `/searchterm` + `Enter` | Search forward in file | `/` = search (like in browser) | Find a string below the cursor |
+| `?searchterm` + `Enter` | Search backward in file | `?` = search in reverse | Find a string above the cursor |
+| `n` | Jump to next match | **N**ext | Cycle through matches forward |
+| `N` | Jump to previous match | Shift = reverse direction | Cycle through matches backward |
+| `:noh` | Clear search highlight | **No** **H**ighlight | Remove yellow highlights after you're done |
+| `*` | Search word under cursor (forward) | Star = highlight this word | Instantly find all occurrences of the current word |
+| `#` | Search word under cursor (backward) | Hash = highlight backward | Same but searches upward first |
+
 ### Search (Snacks Picker)
 
 | Keys | Description | Mnemonic | Use Case |

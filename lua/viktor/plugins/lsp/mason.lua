@@ -12,7 +12,6 @@ return {
                 "graphql",
                 "prismals",
                 "pyright",
-                "eslint",
             },
         },
         dependencies = {
