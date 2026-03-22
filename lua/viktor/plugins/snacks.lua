@@ -21,7 +21,17 @@ return {
 			enabled = true,
 			timeout = 3000,
 		},
-		picker = { enabled = true },
+		picker = {
+			sources = {
+				explorer = {
+					layout = {
+						layout = {
+							width = 20,
+						},
+					},
+				},
+			},
+		},
 		quickfile = { enabled = true },
 		-- scope = { enabled = true, char = "┊" },
 		scroll = { enabled = true },
