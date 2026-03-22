@@ -1,5 +1,9 @@
 local keymap = vim.keymap -- for conciseness
 
+-- save
+keymap.set("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
+keymap.set("i", "<C-s>", "<Esc><cmd>w<CR>", { desc = "Save file" })
+
 -- clear search highlights on Esc
 keymap.set("n", "<Esc>", "<cmd>nohl<CR>", { desc = "Clear search highlights" })
 
